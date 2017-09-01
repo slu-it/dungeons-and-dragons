@@ -5,6 +5,7 @@ import de.sluit.dnd.dice.D20
 import de.sluit.dnd.proficiencies.*
 import de.sluit.dnd.rolls.AbilityCheckRoll
 import de.sluit.dnd.rolls.AttackRoll
+import de.sluit.dnd.rolls.Roll
 import de.sluit.dnd.rolls.SavingThrowRoll
 
 class Character {
@@ -18,100 +19,76 @@ class Character {
     private var level = Level(1)
     private val characterClass: CharacterClass = Barbarian
 
-    // ### abilities & skills
+    // ### abilities
 
-    private var strength = Strength(1)
-    private var dexterity = Dexterity(1)
-    private var constitution = Constitution(1)
-    private var intelligence = Intelligence(1)
-    private var wisdom = Wisdom(1)
-    private var charisma = Charisma(1)
+    var strength = Strength(1)
+    var dexterity = Dexterity(1)
+    var constitution = Constitution(1)
+    var intelligence = Intelligence(1)
+    var wisdom = Wisdom(1)
+    var charisma = Charisma(1)
 
-    private var skills = mutableListOf<Skill>()
+    // ### proficiencies
 
-    private val savingThrowProficiencies: List<SavingThrow>
-        get() = characterClass.savingThrowProficiencies.toList()
+    val skills = mutableListOf<Skill>()
 
-    // ### equipment
-
-    private var hand: Weapon? = null
+    val savingThrowProficiencies: List<SavingThrow>
+        get() = characterClass.savingThrowProficiencies.toList() // might be more?
 
     // ### ability checks
 
-    fun abilityCheckWithAdvantage(roll: () -> AbilityCheckRoll): AbilityCheckRoll {
-        val (firstRoll, secondRoll) = Pair(roll(), roll())
-        return if (firstRoll > secondRoll) firstRoll else secondRoll
+    val strengthCheck = { abilityCheck(strength) }
+    val dexterityCheck = { abilityCheck(dexterity) }
+    val constitutionCheck = { abilityCheck(constitution) }
+    val intelligenceCheck = { abilityCheck(intelligence) }
+    val wisdomCheck = { abilityCheck(wisdom) }
+    val charismaCheck = { abilityCheck(charisma) }
+
+    private fun abilityCheck(ability: Ability): AbilityCheckRoll {
+        return AbilityCheckRoll()
+                .withRoll(d20.roll())
+                .withAbilityModifier(ability.modifier)
     }
 
-    fun abilityCheckWithDisadvantage(roll: () -> AbilityCheckRoll): AbilityCheckRoll {
-        val (firstRoll, secondRoll) = Pair(roll(), roll())
-        return if (firstRoll < secondRoll) firstRoll else secondRoll
-    }
+    // ### skill checks
 
-    fun rollAthleticsCheck() = rollSkillCheck(Athletics, { rollStrengthCheck() })
+    val athleticsCheck = { skillCheck(Athletics, strength) }
+    val acrobaticsCheck = { skillCheck(Acrobatics, dexterity) }
+    val sleightOfHandCheck = { skillCheck(SleightOfHand, dexterity) }
+    val stealthCheck = { skillCheck(Stealth, dexterity) }
+    val arcanaCheck = { skillCheck(Arcana, intelligence) }
+    val historyCheck = { skillCheck(History, intelligence) }
+    val investigationCheck = { skillCheck(Investigation, intelligence) }
+    val natureCheck = { skillCheck(Nature, intelligence) }
+    val religionCheck = { skillCheck(Religion, intelligence) }
+    val animalHandlingCheck = { skillCheck(AnimalHandling, wisdom) }
+    val insightCheck = { skillCheck(Insight, wisdom) }
+    val medicineCheck = { skillCheck(Medicine, wisdom) }
+    val perceptionCheck = { skillCheck(Perception, wisdom) }
+    val survivalCheck = { skillCheck(Survival, wisdom) }
+    val deceptionCheck = { skillCheck(Deception, charisma) }
+    val intimidationCheck = { skillCheck(Intimidation, charisma) }
+    val performanceCheck = { skillCheck(Performance, charisma) }
+    val persuasionCheck = { skillCheck(Persuasion, charisma) }
 
-    fun rollAcrobaticsCheck() = rollSkillCheck(Acrobatics, { rollDexterityCheck() })
-    fun rollSleightOfHandCheck() = rollSkillCheck(SleightOfHand, { rollDexterityCheck() })
-    fun rollStealthCheck() = rollSkillCheck(Stealth, { rollDexterityCheck() })
-
-    fun rollArcanaCheck() = rollSkillCheck(Arcana, { rollIntelligenceCheck() })
-    fun rollHistoryCheck() = rollSkillCheck(History, { rollIntelligenceCheck() })
-    fun rollInvestigationCheck() = rollSkillCheck(Investigation, { rollIntelligenceCheck() })
-    fun rollNatureCheck() = rollSkillCheck(Nature, { rollIntelligenceCheck() })
-    fun rollReligionCheck() = rollSkillCheck(Religion, { rollIntelligenceCheck() })
-
-    fun rollAnimalHandlingCheck() = rollSkillCheck(AnimalHandling, { rollWisdomCheck() })
-    fun rollInsightCheck() = rollSkillCheck(Insight, { rollWisdomCheck() })
-    fun rollMedicineCheck() = rollSkillCheck(Medicine, { rollWisdomCheck() })
-    fun rollPerceptionCheck() = rollSkillCheck(Perception, { rollWisdomCheck() })
-    fun rollSurvivalCheck() = rollSkillCheck(Survival, { rollWisdomCheck() })
-
-    fun rollDeceptionCheck() = rollSkillCheck(Deception, { rollCharismaCheck() })
-    fun rollIntimidationCheck() = rollSkillCheck(Intimidation, { rollCharismaCheck() })
-    fun rollPerformanceCheck() = rollSkillCheck(Performance, { rollCharismaCheck() })
-    fun rollPersuasionCheck() = rollSkillCheck(Persuasion, { rollCharismaCheck() })
-
-    private fun rollSkillCheck(skill: Skill, abilityCheckRoll: () -> AbilityCheckRoll): AbilityCheckRoll {
-        val roll = abilityCheckRoll()
+    private fun skillCheck(skill: Skill, ability: Ability): AbilityCheckRoll {
+        val roll = abilityCheck(ability)
         if (skills.contains(skill)) {
             return roll.withProficiencyBonus(level.proficiencyBonus)
         }
         return roll
     }
 
-    fun rollStrengthCheck() = rollAbilityCheck(strength)
-    fun rollDexterityCheck() = rollAbilityCheck(dexterity)
-    fun rollConstitutionCheck() = rollAbilityCheck(constitution)
-    fun rollIntelligenceCheck() = rollAbilityCheck(intelligence)
-    fun rollWisdomCheck() = rollAbilityCheck(wisdom)
-    fun rollCharismaCheck() = rollAbilityCheck(charisma)
-
-    private fun rollAbilityCheck(ability: Ability): AbilityCheckRoll {
-        return AbilityCheckRoll()
-                .withRoll(d20.roll())
-                .withAbilityModifier(ability.modifier)
-    }
-
     // ### saving throws
 
-    fun savingThrowWithAdvantage(roll: () -> SavingThrowRoll): SavingThrowRoll {
-        val (firstRoll, secondRoll) = Pair(roll(), roll())
-        return if (firstRoll > secondRoll) firstRoll else secondRoll
-    }
+    val strengthSavingThrow = { savingThrow(StrengthSavingThrow, strength) }
+    val dexteritySavingThrow = { savingThrow(DexteritySavingThrow, dexterity) }
+    val constitutionSavingThrow = { savingThrow(ConstitutionSavingThrow, constitution) }
+    val intelligenceSavingThrow = { savingThrow(IntelligenceSavingThrow, intelligence) }
+    val wisdomSavingThrow = { savingThrow(WisdomSavingThrow, wisdom) }
+    val charismaSavingThrow = { savingThrow(CharismaSavingThrow, charisma) }
 
-    fun savingThrowWithDisadvantage(roll: () -> SavingThrowRoll): SavingThrowRoll {
-        val (firstRoll, secondRoll) = Pair(roll(), roll())
-        return if (firstRoll < secondRoll) firstRoll else secondRoll
-    }
-
-    fun rollStrengthSavingThrow() = rollSavingThrow(StrengthSavingThrow, strength)
-    fun rollDexteritySavingThrow() = rollSavingThrow(DexteritySavingThrow, dexterity)
-    fun rollConstitutionSavingThrow() = rollSavingThrow(ConstitutionSavingThrow, constitution)
-    fun rollIntelligenceSavingThrow() = rollSavingThrow(IntelligenceSavingThrow, intelligence)
-    fun rollWisdomSavingThrow() = rollSavingThrow(WisdomSavingThrow, wisdom)
-    fun rollCharismaSavingThrow() = rollSavingThrow(CharismaSavingThrow, charisma)
-
-    private fun rollSavingThrow(savingThrow: SavingThrow, ability: Ability): SavingThrowRoll {
+    private fun savingThrow(savingThrow: SavingThrow, ability: Ability): SavingThrowRoll {
         val roll = SavingThrowRoll()
                 .withRoll(d20.roll())
                 .withAbilityModifier(ability.modifier)
@@ -125,6 +102,18 @@ class Character {
 
     fun rollAttack(): AttackRoll {
         error("asda")
+    }
+
+    // ### common rolls
+
+    fun <T : Roll> withAdvantage(roll: () -> T): T {
+        val (firstRoll, secondRoll) = Pair(roll(), roll())
+        return if (firstRoll > secondRoll) firstRoll else secondRoll
+    }
+
+    fun <T : Roll> withDisadvantage(roll: () -> T): T {
+        val (firstRoll, secondRoll) = Pair(roll(), roll())
+        return if (firstRoll < secondRoll) firstRoll else secondRoll
     }
 
 }
