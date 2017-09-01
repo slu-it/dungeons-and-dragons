@@ -21,12 +21,23 @@ class Character {
 
     // ### abilities
 
-    var strength = Strength(1)
-    var dexterity = Dexterity(1)
-    var constitution = Constitution(1)
-    var intelligence = Intelligence(1)
-    var wisdom = Wisdom(1)
-    var charisma = Charisma(1)
+    private val abilities = mutableMapOf(
+            Strength to 1,
+            Dexterity to 1,
+            Constitution to 1,
+            Intelligence to 1,
+            Wisdom to 1,
+            Charisma to 1
+    )
+
+    val strength = { abilityScoreFor(Strength) }
+    val dexterity = { abilityScoreFor(Dexterity) }
+    val constitution = { abilityScoreFor(Constitution) }
+    val intelligence = { abilityScoreFor(Intelligence) }
+    val wisdom = { abilityScoreFor(Wisdom) }
+    val charisma = { abilityScoreFor(Charisma) }
+
+    private fun abilityScoreFor(ability: Ability) = AbilityScore(ability, abilities[ability]!!)
 
     // ### proficiencies
 
@@ -37,42 +48,46 @@ class Character {
 
     // ### ability checks
 
-    val strengthCheck = { abilityCheck(strength) }
-    val dexterityCheck = { abilityCheck(dexterity) }
-    val constitutionCheck = { abilityCheck(constitution) }
-    val intelligenceCheck = { abilityCheck(intelligence) }
-    val wisdomCheck = { abilityCheck(wisdom) }
-    val charismaCheck = { abilityCheck(charisma) }
+    val strengthCheck = { abilityCheck(Strength) }
+    val dexterityCheck = { abilityCheck(Dexterity) }
+    val constitutionCheck = { abilityCheck(Constitution) }
+    val intelligenceCheck = { abilityCheck(Intelligence) }
+    val wisdomCheck = { abilityCheck(Wisdom) }
+    val charismaCheck = { abilityCheck(Charisma) }
 
     private fun abilityCheck(ability: Ability): AbilityCheckRoll {
+        val abilityScore = abilityScoreFor(ability)
         return AbilityCheckRoll()
                 .withRoll(d20.roll())
-                .withAbilityModifier(ability.modifier)
+                .withAbilityModifier(abilityScore.modifier)
     }
 
     // ### skill checks
 
-    val athleticsCheck = { skillCheck(Athletics, strength) }
-    val acrobaticsCheck = { skillCheck(Acrobatics, dexterity) }
-    val sleightOfHandCheck = { skillCheck(SleightOfHand, dexterity) }
-    val stealthCheck = { skillCheck(Stealth, dexterity) }
-    val arcanaCheck = { skillCheck(Arcana, intelligence) }
-    val historyCheck = { skillCheck(History, intelligence) }
-    val investigationCheck = { skillCheck(Investigation, intelligence) }
-    val natureCheck = { skillCheck(Nature, intelligence) }
-    val religionCheck = { skillCheck(Religion, intelligence) }
-    val animalHandlingCheck = { skillCheck(AnimalHandling, wisdom) }
-    val insightCheck = { skillCheck(Insight, wisdom) }
-    val medicineCheck = { skillCheck(Medicine, wisdom) }
-    val perceptionCheck = { skillCheck(Perception, wisdom) }
-    val survivalCheck = { skillCheck(Survival, wisdom) }
-    val deceptionCheck = { skillCheck(Deception, charisma) }
-    val intimidationCheck = { skillCheck(Intimidation, charisma) }
-    val performanceCheck = { skillCheck(Performance, charisma) }
-    val persuasionCheck = { skillCheck(Persuasion, charisma) }
+    val athleticsCheck = { skillCheck(Athletics) }
+    val acrobaticsCheck = { skillCheck(Acrobatics) }
+    val sleightOfHandCheck = { skillCheck(SleightOfHand) }
+    val stealthCheck = { skillCheck(Stealth) }
+    val arcanaCheck = { skillCheck(Arcana) }
+    val historyCheck = { skillCheck(History) }
+    val investigationCheck = { skillCheck(Investigation) }
+    val natureCheck = { skillCheck(Nature) }
+    val religionCheck = { skillCheck(Religion) }
+    val animalHandlingCheck = { skillCheck(AnimalHandling) }
+    val insightCheck = { skillCheck(Insight) }
+    val medicineCheck = { skillCheck(Medicine) }
+    val perceptionCheck = { skillCheck(Perception) }
+    val survivalCheck = { skillCheck(Survival) }
+    val deceptionCheck = { skillCheck(Deception) }
+    val intimidationCheck = { skillCheck(Intimidation) }
+    val performanceCheck = { skillCheck(Performance) }
+    val persuasionCheck = { skillCheck(Persuasion) }
 
-    private fun skillCheck(skill: Skill, ability: Ability): AbilityCheckRoll {
-        val roll = abilityCheck(ability)
+    private fun skillCheck(skill: Skill): AbilityCheckRoll {
+        val abilityScore = abilityScoreFor(skill.associatedAbility)
+        val roll = AbilityCheckRoll()
+                .withRoll(d20.roll())
+                .withAbilityModifier(abilityScore.modifier)
         if (skills.contains(skill)) {
             return roll.withProficiencyBonus(level.proficiencyBonus)
         }
@@ -81,17 +96,18 @@ class Character {
 
     // ### saving throws
 
-    val strengthSavingThrow = { savingThrow(StrengthSavingThrow, strength) }
-    val dexteritySavingThrow = { savingThrow(DexteritySavingThrow, dexterity) }
-    val constitutionSavingThrow = { savingThrow(ConstitutionSavingThrow, constitution) }
-    val intelligenceSavingThrow = { savingThrow(IntelligenceSavingThrow, intelligence) }
-    val wisdomSavingThrow = { savingThrow(WisdomSavingThrow, wisdom) }
-    val charismaSavingThrow = { savingThrow(CharismaSavingThrow, charisma) }
+    val strengthSavingThrow = { savingThrow(StrengthSavingThrow) }
+    val dexteritySavingThrow = { savingThrow(DexteritySavingThrow) }
+    val constitutionSavingThrow = { savingThrow(ConstitutionSavingThrow) }
+    val intelligenceSavingThrow = { savingThrow(IntelligenceSavingThrow) }
+    val wisdomSavingThrow = { savingThrow(WisdomSavingThrow) }
+    val charismaSavingThrow = { savingThrow(CharismaSavingThrow) }
 
-    private fun savingThrow(savingThrow: SavingThrow, ability: Ability): SavingThrowRoll {
+    private fun savingThrow(savingThrow: SavingThrow): SavingThrowRoll {
+        val abilityScore = abilityScoreFor(savingThrow.associatedAbility)
         val roll = SavingThrowRoll()
                 .withRoll(d20.roll())
-                .withAbilityModifier(ability.modifier)
+                .withAbilityModifier(abilityScore.modifier)
         if (savingThrowProficiencies.contains(savingThrow)) {
             return roll.withProficiencyBonus(level.proficiencyBonus)
         }

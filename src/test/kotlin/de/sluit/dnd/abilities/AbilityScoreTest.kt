@@ -4,9 +4,7 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
-interface AbilityContract {
-
-    fun createAbilityInstance(score: Int): Ability
+internal class AbilityScoreTest {
 
     @CsvSource(
             "1, -5",
@@ -28,8 +26,8 @@ interface AbilityContract {
     )
     @ParameterizedTest(name = "given a score of <{0}>, the modifier will be <{1}>")
     fun `modifiers are calculated correctly`(score: Int, expectedModifier: Int) {
-        val ability = createAbilityInstance(score)
-        val modifier = ability.modifier
+        val abilityScore = AbilityScore(Strength, score)
+        val modifier = abilityScore.modifier
         Assertions.assertThat(modifier).isEqualTo(expectedModifier)
     }
 

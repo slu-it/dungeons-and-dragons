@@ -1,36 +1,30 @@
 package de.sluit.dnd.proficiencies
 
-// strength
+import de.sluit.dnd.abilities.*
 
-object Athletics : Skill()
+object Athletics : Skill(Strength)
 
-// dexterity
+object Acrobatics : Skill(Dexterity)
+object SleightOfHand : Skill(Dexterity)
+object Stealth : Skill(Dexterity)
 
-object Acrobatics : Skill()
-object SleightOfHand : Skill()
-object Stealth : Skill()
+object Arcana : Skill(Intelligence)
+object History : Skill(Intelligence)
+object Investigation : Skill(Intelligence)
+object Nature : Skill(Intelligence)
+object Religion : Skill(Intelligence)
 
-// intelligence
+object AnimalHandling : Skill(Wisdom)
+object Insight : Skill(Wisdom)
+object Medicine : Skill(Wisdom)
+object Perception : Skill(Wisdom)
+object Survival : Skill(Wisdom)
 
-object Arcana : Skill()
-object History : Skill()
-object Investigation : Skill()
-object Nature : Skill()
-object Religion : Skill()
+object Deception : Skill(Charisma)
+object Intimidation : Skill(Charisma)
+object Performance : Skill(Charisma)
+object Persuasion : Skill(Charisma)
 
-// wisdom
-
-object AnimalHandling : Skill()
-object Insight : Skill()
-object Medicine : Skill()
-object Perception : Skill()
-object Survival : Skill()
-
-// charisma
-
-object Deception : Skill()
-object Intimidation : Skill()
-object Performance : Skill()
-object Persuasion : Skill()
-
-sealed class Skill
+sealed class Skill(
+        val associatedAbility: Ability
+)
