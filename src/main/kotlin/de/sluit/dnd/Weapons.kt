@@ -2,8 +2,10 @@ package de.sluit.dnd
 
 import de.sluit.dnd.DamageType.Piercing
 import de.sluit.dnd.DamageType.Slashing
+import de.sluit.dnd.dice.D10
+import de.sluit.dnd.dice.D4
+import de.sluit.dnd.dice.D8
 import de.sluit.dnd.dice.Dice
-import de.sluit.dnd.dice.Die.*
 import de.sluit.dnd.rolls.AttackRoll
 import de.sluit.dnd.rolls.DamageRoll
 

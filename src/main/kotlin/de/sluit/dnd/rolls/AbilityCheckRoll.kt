@@ -1,13 +1,18 @@
 package de.sluit.dnd.rolls
 
 data class AbilityCheckRoll(
-        private val value: Int
+        val roll: Int = 0,
+        val abilityModifier: Int = 0,
+        val proficiencyBonus: Int = 0
 ) : Comparable<AbilityCheckRoll> {
 
-    override fun compareTo(other: AbilityCheckRoll) = value.compareTo(other.value)
+    val total: Int
+        get() = roll + abilityModifier + proficiencyBonus
 
-    fun add(additionalValue: Int): AbilityCheckRoll {
-        return AbilityCheckRoll(value + additionalValue)
-    }
+    override fun compareTo(other: AbilityCheckRoll) = total.compareTo(other.total)
+
+    fun withRoll(value: Int) = copy(roll = value)
+    fun withAbilityModifier(value: Int) = copy(abilityModifier = value)
+    fun withProficiencyBonus(value: Int) = copy(proficiencyBonus = value)
 
 }
