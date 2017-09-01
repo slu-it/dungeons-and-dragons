@@ -10,10 +10,14 @@ import de.sluit.dnd.rolls.SavingThrowRoll
 
 class Character {
 
-    // TODO
-    // https://roll20.net/compendium/dnd5e/Rules:Ability%20Scores#h-Ability%20Scores
+    // TODO: https://roll20.net/compendium/dnd5e/CategoryIndex%3ARules#content
     //  - Passive Checks
-    //  - Saving Throws
+    //  - Any equipment (Weapons, Armor etc.) might apply modifiers to any number of properties of a character!
+    //  - Characters have "Condition" effects on them applying modifiers to all kinds of properties
+    //  - Movement
+    //  - Race - applies modifiers on ability scores, sets base speed and adds special abilities (e.g. Darkvision)
+    //  - Alignment
+    //  - Languages
 
     private val d20 = D20()
     private var level = Level(1)
