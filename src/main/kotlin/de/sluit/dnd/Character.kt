@@ -25,6 +25,19 @@ class Character {
 
     // ### abilities
 
+    val strength: AbilityScore
+        get() = abilityScoreFor { Strength }
+    val dexterity: AbilityScore
+        get() = abilityScoreFor { Dexterity }
+    val constitution: AbilityScore
+        get() = abilityScoreFor { Constitution }
+    val intelligence: AbilityScore
+        get() = abilityScoreFor { Intelligence }
+    val wisdom: AbilityScore
+        get() = abilityScoreFor { Wisdom }
+    val charisma: AbilityScore
+        get() = abilityScoreFor { Charisma }
+
     private val abilities = mutableMapOf(
             Strength to 1,
             Dexterity to 1,
@@ -34,89 +47,87 @@ class Character {
             Charisma to 1
     )
 
-    val strength = { abilityScoreFor(Strength) }
-    val dexterity = { abilityScoreFor(Dexterity) }
-    val constitution = { abilityScoreFor(Constitution) }
-    val intelligence = { abilityScoreFor(Intelligence) }
-    val wisdom = { abilityScoreFor(Wisdom) }
-    val charisma = { abilityScoreFor(Charisma) }
-
-    private fun abilityScoreFor(ability: Ability) = AbilityScore(ability, abilities[ability]!!)
+    private fun abilityScoreFor(ability: () -> Ability) = AbilityScore(abilities[ability()]!!)
 
     // ### proficiencies
 
-    val skills = mutableListOf<Skill>()
+    private val skills = mutableListOf<Skill>()
 
-    val savingThrowProficiencies: List<SavingThrow>
+    private val savingThrowProficiencies: List<Ability>
         get() = characterClass.savingThrowProficiencies.toList() // might be more?
+
+    // ### skill checks
+
+    val athleticsCheck = { skillCheckFor { Athletics } }
+    val acrobaticsCheck = { skillCheckFor { Acrobatics } }
+    val sleightOfHandCheck = { skillCheckFor { SleightOfHand } }
+    val stealthCheck = { skillCheckFor { Stealth } }
+    val arcanaCheck = { skillCheckFor { Arcana } }
+    val historyCheck = { skillCheckFor { History } }
+    val investigationCheck = { skillCheckFor { Investigation } }
+    val natureCheck = { skillCheckFor { Nature } }
+    val religionCheck = { skillCheckFor { Religion } }
+    val animalHandlingCheck = { skillCheckFor { AnimalHandling } }
+    val insightCheck = { skillCheckFor { Insight } }
+    val medicineCheck = { skillCheckFor { Medicine } }
+    val perceptionCheck = { skillCheckFor { Perception } }
+    val survivalCheck = { skillCheckFor { Survival } }
+    val deceptionCheck = { skillCheckFor { Deception } }
+    val intimidationCheck = { skillCheckFor { Intimidation } }
+    val performanceCheck = { skillCheckFor { Performance } }
+    val persuasionCheck = { skillCheckFor { Persuasion } }
+
+    private fun skillCheckFor(skill: () -> Skill): AbilityCheckRoll {
+        val abilityScore = abilityScoreFor(abilityOf(skill))
+        val roll = AbilityCheckRoll()
+                .withRoll(d20.roll())
+                .withAbilityModifier(abilityScore.modifier)
+        if (hasSkillProficiency(skill)) {
+            return roll.withProficiencyBonus(level.proficiencyBonus)
+        }
+        return roll
+    }
+
+    private fun abilityOf(skillSupplier: () -> Skill) = { skillSupplier().ability }
+    private fun hasSkillProficiency(skillSupplier: () -> Skill) = skills.contains(skillSupplier())
 
     // ### ability checks
 
-    val strengthCheck = { abilityCheck(Strength) }
-    val dexterityCheck = { abilityCheck(Dexterity) }
-    val constitutionCheck = { abilityCheck(Constitution) }
-    val intelligenceCheck = { abilityCheck(Intelligence) }
-    val wisdomCheck = { abilityCheck(Wisdom) }
-    val charismaCheck = { abilityCheck(Charisma) }
+    val strengthCheck = { abilityCheck { Strength } }
+    val dexterityCheck = { abilityCheck { Dexterity } }
+    val constitutionCheck = { abilityCheck { Constitution } }
+    val intelligenceCheck = { abilityCheck { Intelligence } }
+    val wisdomCheck = { abilityCheck { Wisdom } }
+    val charismaCheck = { abilityCheck { Charisma } }
 
-    private fun abilityCheck(ability: Ability): AbilityCheckRoll {
+    private fun abilityCheck(ability: () -> Ability): AbilityCheckRoll {
         val abilityScore = abilityScoreFor(ability)
         return AbilityCheckRoll()
                 .withRoll(d20.roll())
                 .withAbilityModifier(abilityScore.modifier)
     }
 
-    // ### skill checks
-
-    val athleticsCheck = { skillCheck(Athletics) }
-    val acrobaticsCheck = { skillCheck(Acrobatics) }
-    val sleightOfHandCheck = { skillCheck(SleightOfHand) }
-    val stealthCheck = { skillCheck(Stealth) }
-    val arcanaCheck = { skillCheck(Arcana) }
-    val historyCheck = { skillCheck(History) }
-    val investigationCheck = { skillCheck(Investigation) }
-    val natureCheck = { skillCheck(Nature) }
-    val religionCheck = { skillCheck(Religion) }
-    val animalHandlingCheck = { skillCheck(AnimalHandling) }
-    val insightCheck = { skillCheck(Insight) }
-    val medicineCheck = { skillCheck(Medicine) }
-    val perceptionCheck = { skillCheck(Perception) }
-    val survivalCheck = { skillCheck(Survival) }
-    val deceptionCheck = { skillCheck(Deception) }
-    val intimidationCheck = { skillCheck(Intimidation) }
-    val performanceCheck = { skillCheck(Performance) }
-    val persuasionCheck = { skillCheck(Persuasion) }
-
-    private fun skillCheck(skill: Skill): AbilityCheckRoll {
-        val abilityScore = abilityScoreFor(skill.associatedAbility)
-        val roll = AbilityCheckRoll()
-                .withRoll(d20.roll())
-                .withAbilityModifier(abilityScore.modifier)
-        if (skills.contains(skill)) {
-            return roll.withProficiencyBonus(level.proficiencyBonus)
-        }
-        return roll
-    }
-
     // ### saving throws
 
-    val strengthSavingThrow = { savingThrow(StrengthSavingThrow) }
-    val dexteritySavingThrow = { savingThrow(DexteritySavingThrow) }
-    val constitutionSavingThrow = { savingThrow(ConstitutionSavingThrow) }
-    val intelligenceSavingThrow = { savingThrow(IntelligenceSavingThrow) }
-    val wisdomSavingThrow = { savingThrow(WisdomSavingThrow) }
-    val charismaSavingThrow = { savingThrow(CharismaSavingThrow) }
+    val strengthSavingThrow = { savingThrow { Strength } }
+    val dexteritySavingThrow = { savingThrow { Dexterity } }
+    val constitutionSavingThrow = { savingThrow { Constitution } }
+    val intelligenceSavingThrow = { savingThrow { Intelligence } }
+    val wisdomSavingThrow = { savingThrow { Wisdom } }
+    val charismaSavingThrow = { savingThrow { Charisma } }
 
-    private fun savingThrow(savingThrow: SavingThrow): SavingThrowRoll {
-        val abilityScore = abilityScoreFor(savingThrow.associatedAbility)
+    private fun savingThrow(ability: () -> Ability): SavingThrowRoll {
+        val abilityScore = abilityScoreFor(ability)
         val roll = SavingThrowRoll()
                 .withRoll(d20.roll())
                 .withAbilityModifier(abilityScore.modifier)
-        if (savingThrowProficiencies.contains(savingThrow)) {
+        if (hasSavingThrowProficiency(ability)) {
             return roll.withProficiencyBonus(level.proficiencyBonus)
         }
         return roll
     }
+
+    private fun hasSavingThrowProficiency(abilitySupplier: () -> Ability) = savingThrowProficiencies.contains(abilitySupplier())
 
     // ### attacks
 

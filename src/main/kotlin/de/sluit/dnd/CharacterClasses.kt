@@ -1,55 +1,55 @@
 package de.sluit.dnd
 
-import de.sluit.dnd.proficiencies.*
+import de.sluit.dnd.abilities.*
 
 object Barbarian : CharacterClass(
-        savingThrowProficiencies = setOf(StrengthSavingThrow, ConstitutionSavingThrow)
+        savingThrowProficiencies = setOf(Strength, Constitution)
 )
 
 object Bard : CharacterClass(
-        savingThrowProficiencies = setOf(DexteritySavingThrow, CharismaSavingThrow)
+        savingThrowProficiencies = setOf(Dexterity, Charisma)
 )
 
 object Cleric : CharacterClass(
-        savingThrowProficiencies = setOf(WisdomSavingThrow, CharismaSavingThrow)
+        savingThrowProficiencies = setOf(Wisdom, Charisma)
 )
 
 object Druid : CharacterClass(
-        savingThrowProficiencies = setOf(IntelligenceSavingThrow, WisdomSavingThrow)
+        savingThrowProficiencies = setOf(Intelligence, Wisdom)
 )
 
 object Fighter : CharacterClass(
-        savingThrowProficiencies = setOf(StrengthSavingThrow, ConstitutionSavingThrow)
+        savingThrowProficiencies = setOf(Strength, Constitution)
 )
 
 object Monk : CharacterClass(
-        savingThrowProficiencies = setOf(StrengthSavingThrow, DexteritySavingThrow)
+        savingThrowProficiencies = setOf(Strength, Dexterity)
 )
 
 object Paladin : CharacterClass(
-        savingThrowProficiencies = setOf(WisdomSavingThrow, CharismaSavingThrow)
+        savingThrowProficiencies = setOf(Wisdom, Charisma)
 )
 
 object Ranger : CharacterClass(
-        savingThrowProficiencies = setOf(StrengthSavingThrow, DexteritySavingThrow)
+        savingThrowProficiencies = setOf(Strength, Dexterity)
 )
 
 object Rogue : CharacterClass(
-        savingThrowProficiencies = setOf(DexteritySavingThrow, IntelligenceSavingThrow)
+        savingThrowProficiencies = setOf(Dexterity, Intelligence)
 )
 
 object Sorcerer : CharacterClass(
-        savingThrowProficiencies = setOf(ConstitutionSavingThrow, CharismaSavingThrow)
+        savingThrowProficiencies = setOf(Constitution, Charisma)
 )
 
 object Warlock : CharacterClass(
-        savingThrowProficiencies = setOf(WisdomSavingThrow, CharismaSavingThrow)
+        savingThrowProficiencies = setOf(Wisdom, Charisma)
 )
 
 object Wizard : CharacterClass(
-        savingThrowProficiencies = setOf(IntelligenceSavingThrow, WisdomSavingThrow)
+        savingThrowProficiencies = setOf(Intelligence, Wisdom)
 )
 
 sealed class CharacterClass(
-        val savingThrowProficiencies: Set<SavingThrow>
+        val savingThrowProficiencies: Set<Ability>
 )

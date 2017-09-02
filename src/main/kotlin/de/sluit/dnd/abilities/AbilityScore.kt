@@ -1,7 +1,6 @@
 package de.sluit.dnd.abilities
 
 data class AbilityScore(
-        val ability: Ability,
         val score: Int
 ) {
 

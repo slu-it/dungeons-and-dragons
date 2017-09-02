@@ -26,5 +26,5 @@ object Performance : Skill(Charisma)
 object Persuasion : Skill(Charisma)
 
 sealed class Skill(
-        val associatedAbility: Ability
+        val ability: Ability
 )
