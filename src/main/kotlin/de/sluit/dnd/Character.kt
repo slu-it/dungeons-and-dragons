@@ -4,11 +4,23 @@ import de.sluit.dnd.abilities.*
 import de.sluit.dnd.dice.D20
 import de.sluit.dnd.proficiencies.*
 import de.sluit.dnd.rolls.AbilityCheckRoll
-import de.sluit.dnd.rolls.AttackRoll
 import de.sluit.dnd.rolls.Roll
 import de.sluit.dnd.rolls.SavingThrowRoll
 
-class Character {
+class Character(
+        val name: String,
+        val level: Level,
+        val characterClass: CharacterClass,
+
+        val strength: StrengthScore,
+        val dexterity: DexterityScore,
+        val constitution: ConstitutionScore,
+        val intelligence: IntelligenceScore,
+        val wisdom: WisdomScore,
+        val charisma: CharismaScore,
+
+        val skills: List<Skill>
+) {
 
     // TODO: https://roll20.net/compendium/dnd5e/CategoryIndex%3ARules#content
     //  - Passive Checks
@@ -20,38 +32,8 @@ class Character {
     //  - Languages
 
     private val d20 = D20()
-    private var level = Level(1)
-    private val characterClass: CharacterClass = Barbarian
-
-    // ### abilities
-
-    val strength: AbilityScore
-        get() = abilityScoreFor { Strength }
-    val dexterity: AbilityScore
-        get() = abilityScoreFor { Dexterity }
-    val constitution: AbilityScore
-        get() = abilityScoreFor { Constitution }
-    val intelligence: AbilityScore
-        get() = abilityScoreFor { Intelligence }
-    val wisdom: AbilityScore
-        get() = abilityScoreFor { Wisdom }
-    val charisma: AbilityScore
-        get() = abilityScoreFor { Charisma }
-
-    private val abilities = mutableMapOf(
-            Strength to 1,
-            Dexterity to 1,
-            Constitution to 1,
-            Intelligence to 1,
-            Wisdom to 1,
-            Charisma to 1
-    )
-
-    private fun abilityScoreFor(ability: () -> Ability) = AbilityScore(abilities[ability()]!!)
 
     // ### proficiencies
-
-    private val skills = mutableListOf<Skill>()
 
     private val savingThrowProficiencies: List<Ability>
         get() = characterClass.savingThrowProficiencies.toList() // might be more?
@@ -129,22 +111,15 @@ class Character {
 
     private fun hasSavingThrowProficiency(abilitySupplier: () -> Ability) = savingThrowProficiencies.contains(abilitySupplier())
 
-    // ### attacks
-
-    fun rollAttack(): AttackRoll {
-        error("asda")
-    }
-
-    // ### common rolls
-
-    fun <T : Roll> withAdvantage(roll: () -> T): T {
-        val (firstRoll, secondRoll) = Pair(roll(), roll())
-        return if (firstRoll > secondRoll) firstRoll else secondRoll
-    }
-
-    fun <T : Roll> withDisadvantage(roll: () -> T): T {
-        val (firstRoll, secondRoll) = Pair(roll(), roll())
-        return if (firstRoll < secondRoll) firstRoll else secondRoll
+    private fun abilityScoreFor(ability: () -> Ability): AbilityScore {
+        return when (ability()) {
+            is Strength -> strength
+            is Dexterity -> dexterity
+            is Constitution -> constitution
+            is Intelligence -> intelligence
+            is Wisdom -> wisdom
+            is Charisma -> charisma
+        }
     }
 
 }

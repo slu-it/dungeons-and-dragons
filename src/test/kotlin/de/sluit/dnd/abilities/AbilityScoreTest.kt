@@ -26,7 +26,7 @@ internal class AbilityScoreTest {
     )
     @ParameterizedTest(name = "given a score of <{0}>, the modifier will be <{1}>")
     fun `modifiers are calculated correctly`(score: Int, expectedModifier: Int) {
-        val abilityScore = AbilityScore(score)
+        val abilityScore = StrengthScore(score)
         val modifier = abilityScore.modifier
         Assertions.assertThat(modifier).isEqualTo(expectedModifier)
     }
