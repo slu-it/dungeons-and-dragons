@@ -30,9 +30,11 @@ internal class CharacterTest {
 
         @Test fun `strength`() {
             val savingThrow = grog.strengthSavingThrow()
-            assertThat(savingThrow.roll).isBetween(1, 20)
-            assertThat(savingThrow.abilityModifier).isEqualTo(7)
-            assertThat(savingThrow.proficiencyBonus).isEqualTo(5)
+            with(savingThrow){
+                assertThat(roll).isBetween(1, 20)
+                assertThat(abilityModifier).isEqualTo(7)
+                assertThat(proficiencyBonus).isEqualTo(5)
+            }
         }
 
         @Test fun `dexterity`() {
@@ -68,6 +70,54 @@ internal class CharacterTest {
             assertThat(savingThrow.roll).isBetween(1, 20)
             assertThat(savingThrow.abilityModifier).isEqualTo(1)
             assertThat(savingThrow.proficiencyBonus).isEqualTo(0)
+        }
+
+    }
+
+    @Nested inner class `ability checks are calculated correctly` {
+
+        @Test fun `strength`() {
+            val check = grog.strengthCheck()
+            with(check){
+                assertThat(roll).isBetween(1, 20)
+                assertThat(abilityModifier).isEqualTo(7)
+                assertThat(proficiencyBonus).isEqualTo(0)
+            }
+        }
+
+        @Test fun `dexterity`() {
+            val check = grog.dexterityCheck()
+            assertThat(check.roll).isBetween(1, 20)
+            assertThat(check.abilityModifier).isEqualTo(2)
+            assertThat(check.proficiencyBonus).isEqualTo(0)
+        }
+
+        @Test fun `constitution`() {
+            val check = grog.constitutionCheck()
+            assertThat(check.roll).isBetween(1, 20)
+            assertThat(check.abilityModifier).isEqualTo(5)
+            assertThat(check.proficiencyBonus).isEqualTo(0)
+        }
+
+        @Test fun `intelligence`() {
+            val check = grog.intelligenceCheck()
+            assertThat(check.roll).isBetween(1, 20)
+            assertThat(check.abilityModifier).isEqualTo(-2)
+            assertThat(check.proficiencyBonus).isEqualTo(0)
+        }
+
+        @Test fun `wisdom`() {
+            val check = grog.wisdomCheck()
+            assertThat(check.roll).isBetween(1, 20)
+            assertThat(check.abilityModifier).isEqualTo(0)
+            assertThat(check.proficiencyBonus).isEqualTo(0)
+        }
+
+        @Test fun `charisma`() {
+            val check = grog.charismaCheck()
+            assertThat(check.roll).isBetween(1, 20)
+            assertThat(check.abilityModifier).isEqualTo(1)
+            assertThat(check.proficiencyBonus).isEqualTo(0)
         }
 
     }
